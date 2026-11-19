@@ -145,14 +145,6 @@
       .x-empty h3 { font: var(--type-heading); }
       .x-empty p { color: var(--text-secondary); max-width: 40ch; }
 
-      /* Splash */
-      .x-splash { position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 16px; background: var(--x-oled); transition: opacity 420ms var(--ease-out), visibility 420ms; }
-      .x-splash.is-gone { opacity: 0; visibility: hidden; }
-      .x-splash svg { width: 84px; height: 84px; }
-      .x-splash .x-draw { stroke: var(--fill-system-green); animation: x-draw 900ms var(--ease-out) both; }
-      .x-splash p { font: var(--type-title); color: var(--text-primary); animation: x-fade-in 600ms 250ms var(--ease-out) both; }
-      .x-splash small { font: var(--type-caption); color: var(--text-secondary); animation: x-fade-in 600ms 400ms var(--ease-out) both; }
-
       /* Toast */
       .x-toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); z-index: 60; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--r-pill); background: var(--fill-primary); color: var(--text-primary-on); font: var(--type-label); box-shadow: var(--hark-shadow); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; transition: opacity var(--dur-quick) ease, transform 300ms var(--ease-out); }
       .x-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
@@ -227,12 +219,6 @@
     </style>
   </head>
   <body>
-    <div class="x-splash" id="splash" aria-hidden="true">
-      <svg viewBox="0 0 24 24" class="x-ico"><path class="x-draw" pathLength="1" d="M4 17l5-6 4 3.5L20 6" /><circle class="x-pulse" cx="20" cy="6" r="1.6" fill="currentColor" stroke="none" /></svg>
-      <p>NexusJournal</p>
-      <small>Il tuo diario di trading</small>
-    </div>
-
     <div class="page" id="top">
       <header class="x-appbar">
         <a class="x-brand" href="#" data-go="dashboard" aria-label="NexusJournal, panoramica">
@@ -578,7 +564,7 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         /* ---------- Version ---------- */
-        const APP_VERSION = "1.2.0";
+        const APP_VERSION = "1.2.1";
         $("app-version").textContent = APP + " v" + APP_VERSION;
         $("ob-version").textContent = "v" + APP_VERSION;
 
@@ -1282,9 +1268,7 @@
         /* ---------- Start ---------- */
         var start = (location.hash || "").slice(1);
         go(["dashboard", "trades", "new", "stats", "settings"].indexOf(start) >= 0 ? start : "dashboard");
-        if (!store.get(OB_KEY)) onboarding.show(reduce ? 0 : 950);
-        var splash = $("splash");
-        setTimeout(function () { splash.classList.add("is-gone"); setTimeout(function () { splash.remove(); }, 500); }, reduce ? 0 : 1100);
+        if (!store.get(OB_KEY)) onboarding.show(0);
       })();
     </script>
   </body>
