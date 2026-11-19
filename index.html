@@ -147,6 +147,60 @@
       input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea { width: 100%; max-width: 100%; box-sizing: border-box; min-width: 0; }
       input[type="date"], input[type="time"], input[type="datetime-local"] { -webkit-appearance: none; appearance: none; display: block; text-align: left; }
       input::-webkit-date-and-time-value { text-align: left; }
+
+      /* ---------- First-launch onboarding ---------- */
+      .x-ob { --x-ob-green: var(--fill-system-green); --x-ob-blue: #3b82f6; --x-ob-violet: #8b5cf6; position: fixed; inset: 0; z-index: 90; overflow: hidden; background: #000; color: #fff; touch-action: none; overscroll-behavior: contain; opacity: 1; transition: opacity 380ms var(--ease-out), visibility 380ms; }
+      .x-ob[hidden] { display: none; }
+      .x-ob.is-leaving { opacity: 0; visibility: hidden; }
+      .x-ob__glow { position: absolute; inset: 0; pointer-events: none; animation: x-ob-breathe 7s ease-in-out infinite alternate; }
+      .x-ob__orb { position: absolute; left: 50%; top: 34%; width: 150vmin; height: 150vmin; margin: -75vmin 0 0 -75vmin; border-radius: 50%; opacity: 0; will-change: transform, opacity; }
+      .x-ob__orb--g { background: radial-gradient(closest-side, color-mix(in srgb, var(--x-ob-green) 55%, transparent), color-mix(in srgb, var(--x-ob-green) 14%, transparent) 55%, transparent); }
+      .x-ob__orb--b { background: radial-gradient(closest-side, color-mix(in srgb, var(--x-ob-blue) 55%, transparent), color-mix(in srgb, var(--x-ob-blue) 14%, transparent) 55%, transparent); }
+      .x-ob__orb--v { background: radial-gradient(closest-side, color-mix(in srgb, var(--x-ob-violet) 55%, transparent), color-mix(in srgb, var(--x-ob-violet) 14%, transparent) 55%, transparent); }
+      @keyframes x-ob-breathe { from { transform: scale(1); } to { transform: scale(1.08) translateY(-2%); } }
+      .x-ob__skip { position: absolute; z-index: 3; top: calc(env(safe-area-inset-top, 0px) + 8px); right: calc(env(safe-area-inset-right, 0px) + 12px); min-height: var(--tap); min-width: var(--tap); padding: 0 14px; border: 0; border-radius: var(--r-pill); background: transparent; color: rgba(255, 255, 255, .72); font: var(--type-body-strong); cursor: pointer; }
+      .x-ob__skip:active { transform: scale(.96); }
+      .x-ob__stage { position: absolute; inset: 0; padding: calc(env(safe-area-inset-top, 0px) + 64px) calc(env(safe-area-inset-right, 0px) + 28px) calc(env(safe-area-inset-bottom, 0px) + 128px) calc(env(safe-area-inset-left, 0px) + 28px); }
+      .x-ob__slide { position: absolute; inset: inherit; padding: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; pointer-events: none; }
+      .x-ob__slide.is-current { pointer-events: auto; }
+      .x-ob__art, .x-ob__copy { will-change: transform, opacity; }
+      .x-ob__art { width: min(78vw, 320px, 38vh); aspect-ratio: 1.2; margin-bottom: 36px; }
+      .x-ob__art svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .x-ob__art .x-ob-g { stroke: var(--x-ob-green); }
+      .x-ob__art .x-ob-r { stroke: var(--fill-system-red); }
+      .x-ob__art .x-ob-dim { stroke: rgba(255, 255, 255, .35); }
+      .x-ob__art .x-ob-fg { fill: var(--x-ob-green); stroke: none; }
+      .x-ob__art .x-ob-fw { fill: rgba(255, 255, 255, .16); stroke: none; }
+      .x-ob-d { stroke-dasharray: 1; stroke-dashoffset: 1; }
+      .x-ob-f { opacity: 0; }
+      .x-ob__slide.is-drawn .x-ob-d { animation: x-ob-draw 1100ms var(--ease-out) var(--d, 0ms) both; }
+      .x-ob__slide.is-drawn .x-ob-f { animation: x-ob-fade 600ms var(--ease-out) var(--d, 0ms) both; }
+      @keyframes x-ob-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+      @keyframes x-ob-fade { from { opacity: 0; } to { opacity: 1; } }
+      .x-ob__copy h2 { margin: 0 0 12px; font: var(--weight-bold) clamp(28px, 7.4vw, 36px)/1.12 var(--sans); letter-spacing: -0.02em; color: #fff; text-wrap: balance; }
+      .x-ob__copy p { margin: 0 auto; max-width: 30ch; font: var(--type-body); font-size: 17px; line-height: 1.45; color: rgba(255, 255, 255, .68); text-wrap: pretty; }
+      .x-ob__start { display: flex; align-items: center; justify-content: center; width: min(100%, 340px); min-height: 56px; margin: 32px auto 0; border: 0; border-radius: var(--r-l); background: #fff; color: #000; font: var(--weight-bold) 17px/1 var(--sans); cursor: pointer; transition: transform var(--dur-quick) ease; }
+      .x-ob__start:active { transform: scale(.97); }
+      .x-ob__foot { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 calc(env(safe-area-inset-right, 0px) + 24px) calc(env(safe-area-inset-bottom, 0px) + 28px) calc(env(safe-area-inset-left, 0px) + 28px); pointer-events: none; }
+      .x-ob__dots { position: relative; width: 72px; height: 8px; pointer-events: none; }
+      .x-ob__dot { position: absolute; left: 0; top: 0; height: 8px; width: 24px; will-change: transform, opacity; }
+      .x-ob__dot i { position: absolute; top: 0; left: 0; height: 8px; background: #fff; transform-origin: 0 50%; }
+      .x-ob__dot i:nth-child(1), .x-ob__dot i:nth-child(3) { width: 8px; border-radius: 50%; }
+      .x-ob__dot i:nth-child(2) { left: 4px; width: 1px; }
+      .x-ob__next { pointer-events: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 22px; border: 0; border-radius: var(--r-pill); background: #262626; color: #fff; font: var(--type-body-strong); font-size: 16px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); will-change: opacity, transform; }
+      .x-ob__next svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .x-ob__next:active { transform: scale(.96); }
+      .x-ob button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+      .x-ob__ver { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); margin: 0; text-align: center; font: var(--type-caption); color: rgba(255, 255, 255, .5); pointer-events: none; }
+      .x-version { margin: 32px 0 0; text-align: center; font: var(--type-caption); color: var(--text-secondary); }
+      .x-row-btn { width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: var(--type-body); text-align: left; cursor: pointer; }
+      .x-row-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--text-secondary); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      @media (prefers-reduced-motion: reduce) {
+        .x-ob__glow { animation: none; }
+        .x-ob__slide, .x-ob__dot, .x-ob__next, .x-ob__orb { transition: opacity 300ms ease; }
+        .x-ob-d { stroke-dashoffset: 0; animation: none !important; }
+        .x-ob-f { opacity: 1; animation: none !important; }
+      }
     </style>
   </head>
   <body>
@@ -309,6 +363,7 @@
                   <select class="x-input" id="set-currency"><option value="EUR">Euro (€)</option><option value="USD">Dollaro USA ($)</option><option value="GBP">Sterlina (£)</option><option value="CHF">Franco svizzero (CHF)</option><option value="JPY">Yen (¥)</option></select></label>
                 <label class="x-field"><span>Capitale iniziale</span><input class="x-input" type="number" id="set-capital" inputmode="decimal" step="any" min="0" placeholder="0" /></label>
                 <label class="x-toggle"><span>Vibrazione (feedback aptico)</span><input type="checkbox" id="set-haptics" /></label>
+                <button class="x-toggle x-row-btn" type="button" id="set-intro"><span>Rivedi introduzione</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
               </div>
             </div>
             <div>
@@ -334,6 +389,7 @@
             </div>
           </div>
           <p class="fineprint" style="margin-top: 24px">NexusJournal funziona offline: i dati restano solo su questo dispositivo. Fai un backup regolarmente.</p>
+          <p class="x-version" id="app-version"></p>
         </section>
       </main>
     </div>
@@ -358,6 +414,126 @@
 
     <div class="x-toast" id="toast" role="status" aria-live="polite"></div>
 
+    <div class="x-ob" id="onboard" role="dialog" aria-modal="true" aria-label="Introduzione a NexusJournal" tabindex="-1" hidden>
+      <div class="x-ob__glow" aria-hidden="true">
+        <div class="x-ob__orb x-ob__orb--g"></div>
+        <div class="x-ob__orb x-ob__orb--b"></div>
+        <div class="x-ob__orb x-ob__orb--v"></div>
+      </div>
+      <button class="x-ob__skip" type="button" id="ob-skip">Salta</button>
+      <div class="x-ob__stage" id="ob-stage">
+        <section class="x-ob__slide" aria-roledescription="slide" aria-label="1 di 4">
+          <div class="x-ob__art" aria-hidden="true">
+            <svg viewBox="0 0 240 200">
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M20 180H224" style="--d:0ms" />
+              <path class="x-ob-d x-ob-r" pathLength="1" d="M48 112v52" style="--d:120ms" />
+              <rect class="x-ob-d x-ob-r" pathLength="1" x="40" y="122" width="16" height="30" rx="3" style="--d:160ms" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M86 94v58" style="--d:220ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="78" y="104" width="16" height="36" rx="3" style="--d:260ms" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M124 66v60" style="--d:320ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="116" y="78" width="16" height="36" rx="3" style="--d:360ms" />
+              <path class="x-ob-d x-ob-r" pathLength="1" d="M162 64v42" style="--d:420ms" />
+              <rect class="x-ob-d x-ob-r" pathLength="1" x="154" y="72" width="16" height="24" rx="3" style="--d:460ms" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M200 20v66" style="--d:520ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="192" y="30" width="16" height="44" rx="3" style="--d:560ms" />
+              <path class="x-ob-d" pathLength="1" d="M24 150C48 140 60 128 86 118S112 92 124 90 150 92 162 84 188 50 214 36" style="--d:500ms; stroke-width: 3.5" />
+              <circle class="x-ob-f x-ob-fg" cx="214" cy="36" r="6" style="--d:1300ms" />
+            </svg>
+          </div>
+          <div class="x-ob__copy">
+            <h2>Benvenuto in NexusJournal</h2>
+            <p>Il tuo diario di trading personale, tutto sul tuo iPhone.</p>
+          </div>
+          <p class="x-ob__ver" id="ob-version"></p>
+        </section>
+        <section class="x-ob__slide" aria-roledescription="slide" aria-label="2 di 4">
+          <div class="x-ob__art" aria-hidden="true">
+            <svg viewBox="0 0 240 200">
+              <rect class="x-ob-d" pathLength="1" x="34" y="14" width="150" height="172" rx="20" style="--d:0ms" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M54 40h56" style="--d:200ms" />
+              <rect class="x-ob-d x-ob-dim" pathLength="1" x="54" y="56" width="110" height="22" rx="7" style="--d:280ms" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M54 96h40" style="--d:360ms" />
+              <rect class="x-ob-d x-ob-dim" pathLength="1" x="54" y="108" width="50" height="22" rx="7" style="--d:420ms" />
+              <rect class="x-ob-d x-ob-dim" pathLength="1" x="114" y="108" width="50" height="22" rx="7" style="--d:480ms" />
+              <rect class="x-ob-f x-ob-fw" x="54" y="146" width="80" height="22" rx="7" style="--d:700ms" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M62 157l6 5 10-11" style="--d:800ms" />
+              <circle class="x-ob-f x-ob-fg" cx="186" cy="150" r="30" style="--d:600ms; fill-opacity: .18" />
+              <circle class="x-ob-d x-ob-g" pathLength="1" cx="186" cy="150" r="30" style="--d:560ms" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M186 136v28M172 150h28" style="--d:900ms; stroke-width: 4" />
+            </svg>
+          </div>
+          <div class="x-ob__copy">
+            <h2>Registra ogni trade</h2>
+            <p>Entrata, uscita, stop, setup, emozioni e screenshot del grafico in pochi tocchi.</p>
+          </div>
+        </section>
+        <section class="x-ob__slide" aria-roledescription="slide" aria-label="3 di 4">
+          <div class="x-ob__art" aria-hidden="true">
+            <svg viewBox="0 0 240 200">
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M10 176h104" style="--d:0ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="18" y="120" width="16" height="56" rx="4" style="--d:120ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="42" y="90" width="16" height="86" rx="4" style="--d:200ms" />
+              <rect class="x-ob-d x-ob-r" pathLength="1" x="66" y="138" width="16" height="38" rx="4" style="--d:280ms" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="90" y="56" width="16" height="120" rx="4" style="--d:360ms" />
+              <rect class="x-ob-d" pathLength="1" x="128" y="40" width="104" height="136" rx="16" style="--d:220ms" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M128 70h104M152 30v18M208 30v18" style="--d:420ms" />
+              <g style="--d:700ms">
+                <rect class="x-ob-f x-ob-fg" x="140" y="82" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fw" x="162" y="82" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fg" x="184" y="82" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fw" x="206" y="82" width="16" height="16" rx="4" />
+              </g>
+              <g style="--d:820ms">
+                <rect class="x-ob-f x-ob-fw" x="140" y="106" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fg" x="162" y="106" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fg" x="184" y="106" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fw" x="206" y="106" width="16" height="16" rx="4" />
+              </g>
+              <g style="--d:940ms">
+                <rect class="x-ob-f x-ob-fg" x="140" y="130" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fw" x="162" y="130" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fw" x="184" y="130" width="16" height="16" rx="4" />
+                <rect class="x-ob-f x-ob-fg" x="206" y="130" width="16" height="16" rx="4" />
+              </g>
+              <g style="--d:1060ms">
+                <rect class="x-ob-f x-ob-fg" x="140" y="152" width="16" height="12" rx="4" />
+                <rect class="x-ob-f x-ob-fg" x="162" y="152" width="16" height="12" rx="4" />
+              </g>
+            </svg>
+          </div>
+          <div class="x-ob__copy">
+            <h2>Capisci i tuoi numeri</h2>
+            <p>P&amp;L, win rate, curva del capitale, calendario e statistiche per setup e orario.</p>
+          </div>
+        </section>
+        <section class="x-ob__slide" aria-roledescription="slide" aria-label="4 di 4">
+          <div class="x-ob__art" aria-hidden="true">
+            <svg viewBox="0 0 240 200">
+              <rect class="x-ob-d" pathLength="1" x="72" y="6" width="96" height="188" rx="22" style="--d:0ms" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M106 20h28" style="--d:300ms" />
+              <circle class="x-ob-f x-ob-fg" cx="120" cy="104" r="44" style="--d:500ms; fill-opacity: .14" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M104 98V86a16 16 0 0 1 32 0v12" style="--d:420ms; stroke-width: 4" />
+              <rect class="x-ob-d x-ob-g" pathLength="1" x="96" y="98" width="48" height="40" rx="9" style="--d:560ms; stroke-width: 4" />
+              <path class="x-ob-d x-ob-g" pathLength="1" d="M120 112v10" style="--d:900ms; stroke-width: 4" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M100 168h40" style="--d:700ms" />
+              <path class="x-ob-d x-ob-dim" pathLength="1" d="M40 60l-8-8M30 92h-12M40 124l-8 8M200 60l8-8M210 92h12M200 124l8 8" style="--d:1000ms" />
+            </svg>
+          </div>
+          <div class="x-ob__copy">
+            <h2>I tuoi dati, solo tuoi</h2>
+            <p>Salvati sul dispositivo. Esporta un backup quando vuoi. Aggiungila alla schermata Home da Safari.</p>
+            <button class="x-ob__start" type="button" id="ob-start">Inizia</button>
+          </div>
+        </section>
+      </div>
+      <div class="x-ob__foot">
+        <div class="x-ob__dots" id="ob-dots" role="img" aria-label="Pagina 1 di 4">
+          <span class="x-ob__dot"><i></i><i></i><i></i></span><span class="x-ob__dot"><i></i><i></i><i></i></span><span class="x-ob__dot"><i></i><i></i><i></i></span><span class="x-ob__dot"><i></i><i></i><i></i></span>
+        </div>
+        <button class="x-ob__next" type="button" id="ob-next">Avanti<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+      </div>
+    </div>
+
     <script src="hark.js"></script>
     <script src="chart.js"></script>
     <script src="datalabels.js"></script>
@@ -377,6 +553,11 @@
         var KEY_TRADES = SLUG + ".trades", KEY_SETTINGS = SLUG + ".settings";
         var doc = document, $ = function (id) { return doc.getElementById(id); };
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ---------- Version ---------- */
+        const APP_VERSION = "1.1.0";
+        $("app-version").textContent = APP + " v" + APP_VERSION;
+        $("ob-version").textContent = "v" + APP_VERSION;
 
         // Always the black OLED theme.
         doc.documentElement.setAttribute("data-theme", "dark");
@@ -896,9 +1077,189 @@
           saveTrades(); haptic("success"); toast("Dati di esempio caricati"); go("dashboard");
         });
 
+        /* ---------- First-launch onboarding ---------- */
+        var OB_KEY = "nj_onboarded";
+        var onboarding = (function () {
+          var root = $("onboard"), stage = $("ob-stage"), next = $("ob-next"), dotsBox = $("ob-dots");
+          var slides = [].slice.call(root.querySelectorAll(".x-ob__slide"));
+          var parts = slides.map(function (s) { return { art: s.querySelector(".x-ob__art"), copy: s.querySelector(".x-ob__copy") }; });
+          var orbs = [].slice.call(root.querySelectorAll(".x-ob__orb"));
+          var dots = [].slice.call(root.querySelectorAll(".x-ob__dot")).map(function (d) { return { el: d, mid: d.children[1], cap: d.children[2] }; });
+          var N = slides.length, MAX = N - 1;
+          /* orb position per slide: x vw, y vh, scale */
+          var ORB = [[-16, -6, 1], [20, -14, 1.12], [-14, 8, .96], [12, -10, 1.06]];
+          var pos = 0, vel = 0, target = 0, active = -1, raf = 0, pending = 0, lastT = 0, open = false, drag = null, swallowClick = false;
+
+          function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+          function tri(x) { return Math.max(0, 1 - Math.abs(x)); }
+          function width() { return root.clientWidth || window.innerWidth || 375; }
+
+          function redraw(i) { var s = slides[i]; if (!s || reduce) return; s.classList.remove("is-drawn"); void s.offsetWidth; s.classList.add("is-drawn"); }
+
+          function setActive(i, tick) {
+            if (i === active) return;
+            active = i;
+            slides.forEach(function (s, j) {
+              var on = j === i;
+              s.classList.toggle("is-current", on);
+              s.inert = !on;
+              if (on) s.removeAttribute("aria-hidden"); else s.setAttribute("aria-hidden", "true");
+            });
+            dotsBox.setAttribute("aria-label", "Pagina " + (i + 1) + " di " + N);
+            redraw(i);
+            if (tick) haptic("tap");
+            if (reduce) paint();
+          }
+
+          function paint() {
+            var p = reduce ? active : pos, w = width();
+            var pc = clamp(p, 0, MAX);
+            for (var i = 0; i < N; i++) {
+              var d = p - i, a = Math.min(Math.abs(d), 1), o = 1 - a;
+              var op = o * o * (3 - 2 * o);
+              slides[i].style.opacity = op.toFixed(4);
+              slides[i].style.visibility = op < 0.002 ? "hidden" : "visible";
+              if (a >= 0.999 && i !== active) slides[i].classList.remove("is-drawn");
+              if (!reduce) {
+                var s = (1 - 0.08 * a).toFixed(4);
+                parts[i].art.style.transform = "translate3d(" + (-d * w * 0.3).toFixed(2) + "px,0,0) scale(" + s + ")";
+                parts[i].copy.style.transform = "translate3d(" + (-d * w * 0.16).toFixed(2) + "px,0,0) scale(" + s + ")";
+              }
+            }
+            /* orb: green → blue → violet → green */
+            var wts = [tri(pc) + tri(pc - 3), tri(pc - 1), tri(pc - 2)];
+            var i0 = Math.min(Math.floor(pc), MAX - 1), f = pc - i0, A = ORB[i0], B = ORB[i0 + 1];
+            var ox = A[0] + (B[0] - A[0]) * f, oy = A[1] + (B[1] - A[1]) * f, os = A[2] + (B[2] - A[2]) * f;
+            orbs.forEach(function (orb, k) {
+              orb.style.opacity = Math.min(1, wts[k]).toFixed(4);
+              if (!reduce) orb.style.transform = "translate3d(" + ox.toFixed(2) + "vw," + oy.toFixed(2) + "vh,0) scale(" + os.toFixed(4) + ")";
+            });
+            /* dots: the active one stretches into a pill */
+            var x = 0;
+            dots.forEach(function (dt, k) {
+              var s = tri(pc - k);
+              dt.el.style.transform = "translate3d(" + x.toFixed(2) + "px,0,0)";
+              dt.el.style.opacity = (0.35 + 0.65 * s).toFixed(3);
+              dt.mid.style.transform = "scaleX(" + (16 * s).toFixed(3) + ")";
+              dt.cap.style.transform = "translate3d(" + (16 * s).toFixed(2) + "px,0,0)";
+              x += 8 + 16 * s + 8;
+            });
+            /* Avanti fades out on the last slide */
+            var no = clamp(MAX - p, 0, 1);
+            next.style.opacity = no.toFixed(3);
+            if (!reduce) next.style.transform = "translate3d(0," + ((1 - no) * 12).toFixed(2) + "px,0)";
+            next.style.visibility = no < 0.01 ? "hidden" : "visible";
+            next.style.pointerEvents = no < 0.5 ? "none" : "auto";
+          }
+
+          function check() { setActive(clamp(Math.round(pos), 0, MAX), true); }
+
+          function step(t) {
+            var dt = Math.min(0.032, Math.max(0.001, (t - lastT) / 1000)); lastT = t;
+            var k = 220, c = 2 * Math.sqrt(k) * 0.8;
+            vel += (-k * (pos - target) - c * vel) * dt;
+            pos += vel * dt;
+            if (Math.abs(pos - target) < 0.0005 && Math.abs(vel) < 0.01) { pos = target; vel = 0; raf = 0; check(); paint(); return; }
+            check(); paint();
+            raf = requestAnimationFrame(step);
+          }
+          function animateTo(i) {
+            target = clamp(i, 0, MAX);
+            if (reduce) { pos = target; vel = 0; setActive(target, true); return; }
+            if (!raf) { lastT = performance.now(); raf = requestAnimationFrame(step); }
+          }
+          function schedule() { if (!pending) pending = requestAnimationFrame(function () { pending = 0; check(); paint(); }); }
+
+          stage.addEventListener("pointerdown", function (e) {
+            if (!open || drag || (e.pointerType === "mouse" && e.button !== 0)) return;
+            if (raf) { cancelAnimationFrame(raf); raf = 0; }
+            drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, p0: pos, moved: false, samples: [[e.timeStamp, e.clientX]] };
+            vel = 0;
+          });
+          stage.addEventListener("pointermove", function (e) {
+            if (!drag || e.pointerId !== drag.id) return;
+            var dx = e.clientX - drag.x0;
+            if (!drag.moved) {
+              if (Math.abs(dx) < 6) return;
+              drag.moved = true;
+              try { stage.setPointerCapture(drag.id); } catch (err) {}
+            }
+            drag.samples.push([e.timeStamp, e.clientX]);
+            while (drag.samples.length > 2 && e.timeStamp - drag.samples[0][0] > 100) drag.samples.shift();
+            if (reduce) return;
+            var p = drag.p0 - dx / width();
+            if (p < 0) p *= 0.35; else if (p > MAX) p = MAX + (p - MAX) * 0.35;
+            pos = p;
+            schedule();
+          });
+          function endDrag(e) {
+            if (!drag || e.pointerId !== drag.id) return;
+            var d = drag; drag = null;
+            if (!d.moved) { if (!reduce) animateTo(Math.round(pos)); return; }
+            swallowClick = true; setTimeout(function () { swallowClick = false; }, 0);
+            var first = d.samples[0], last = d.samples[d.samples.length - 1], ms = Math.max(1, last[0] - first[0]);
+            var v = -((last[1] - first[1]) / ms) * 1000 / width(); /* slides per second */
+            var base = clamp(Math.round(d.p0), 0, MAX), dest;
+            if (reduce) {
+              var dx = (e.clientX || last[1]) - d.x0;
+              animateTo(Math.abs(dx) > 40 || Math.abs(v) > 0.5 ? base + (dx < 0 ? 1 : -1) : base);
+              return;
+            }
+            if (Math.abs(v) > 0.5) dest = base + (v > 0 ? 1 : -1);
+            else dest = Math.round(pos + v * 0.15);
+            dest = clamp(dest, Math.max(0, base - 1), Math.min(MAX, base + 1));
+            vel = clamp(v, -8, 8);
+            animateTo(dest);
+          }
+          stage.addEventListener("pointerup", endDrag);
+          stage.addEventListener("pointercancel", endDrag);
+          root.addEventListener("click", function (e) { if (swallowClick) { e.stopPropagation(); e.preventDefault(); } }, true);
+          root.addEventListener("keydown", function (e) {
+            if (!open) return;
+            if (e.key === "ArrowRight") { e.preventDefault(); animateTo(active + 1); }
+            else if (e.key === "ArrowLeft") { e.preventDefault(); animateTo(active - 1); }
+            else if (e.key === "Escape") { e.preventDefault(); finish(false); }
+          });
+          window.addEventListener("resize", function () { if (open) paint(); });
+
+          next.addEventListener("click", function () { animateTo(active + 1); });
+          $("ob-skip").addEventListener("click", function () { haptic("tap"); finish(false); });
+          $("ob-start").addEventListener("click", function () { finish(true); });
+
+          function show(delay) {
+            if (raf) { cancelAnimationFrame(raf); raf = 0; }
+            open = true; drag = null;
+            root.hidden = false; root.classList.remove("is-leaving");
+            pos = target = 0; vel = 0; active = -1;
+            slides.forEach(function (s) { s.classList.remove("is-drawn"); });
+            setActive(0, false);
+            paint();
+            if (delay) { slides[0].classList.remove("is-drawn"); setTimeout(function () { if (open && active === 0) redraw(0); }, delay); }
+            doc.documentElement.style.overflow = "hidden";
+            try { root.focus({ preventScroll: true }); } catch (e) {}
+          }
+          function finish(double) {
+            if (!open) return;
+            open = false; drag = null;
+            store.set(OB_KEY, "1");
+            if (double) { haptic("tap"); setTimeout(function () { haptic("tap"); }, 110); }
+            go("dashboard");
+            doc.documentElement.style.overflow = "";
+            root.classList.add("is-leaving");
+            setTimeout(function () {
+              if (open) return;
+              if (raf) { cancelAnimationFrame(raf); raf = 0; }
+              root.hidden = true; root.classList.remove("is-leaving");
+            }, 420);
+          }
+          return { show: show };
+        })();
+        $("set-intro").addEventListener("click", function () { haptic("tap"); onboarding.show(0); });
+
         /* ---------- Start ---------- */
         var start = (location.hash || "").slice(1);
         go(["dashboard", "trades", "new", "stats", "settings"].indexOf(start) >= 0 ? start : "dashboard");
+        if (!store.get(OB_KEY)) onboarding.show(reduce ? 0 : 950);
         var splash = $("splash");
         setTimeout(function () { splash.classList.add("is-gone"); setTimeout(function () { splash.remove(); }, 500); }, reduce ? 0 : 1100);
       })();
