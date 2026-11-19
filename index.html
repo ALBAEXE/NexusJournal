@@ -2,6 +2,15 @@
 <html lang="it" data-theme="dark">
   <head>
     <meta charset="utf-8" />
+    <script>
+      (function () {
+        var d = document.documentElement, done = false;
+        d.style.background = "#000";
+        try { done = !!localStorage.getItem("nj_onboarded"); } catch (e) {}
+        if (!done) { try { done = !!sessionStorage.getItem("nj_onboarded"); } catch (e) {} }
+        if (!done) d.classList.add("nj-onboarding");
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>NexusJournal</title>
     <meta name="description" content="NexusJournal: il tuo diario di trading personale, offline e privato." />
@@ -169,6 +178,21 @@
       .x-ob { --x-ob-green: var(--fill-system-green); --x-ob-blue: #3b82f6; --x-ob-violet: #8b5cf6; position: fixed; inset: 0; z-index: 90; overflow: hidden; background: #000; color: #fff; touch-action: none; overscroll-behavior: contain; opacity: 1; transition: opacity 380ms var(--ease-out), visibility 380ms; }
       .x-ob[hidden] { display: none; }
       .x-ob.is-leaving { opacity: 0; visibility: hidden; }
+      /* Boot: before onboarding is done, only the overlay paints, with its first slide already in place */
+      html.nj-onboarding, html.nj-onboarding body { background: #000; }
+      html.nj-onboarding body > :not(#onboard) { visibility: hidden; }
+      html.nj-onboarding #onboard { display: block; }
+      html.nj-onboarding .x-ob__slide:first-child { opacity: 1; }
+      html.nj-onboarding .x-ob__orb--g { opacity: 1; transform: translate3d(-16vw, -6vh, 0); }
+      html.nj-onboarding .x-ob__dot:not(:first-child) { opacity: .35; }
+      html.nj-onboarding .x-ob__dot:not(:first-child) i:nth-child(2) { transform: scaleX(0); }
+      html.nj-onboarding .x-ob__dot:first-child i:nth-child(2) { transform: scaleX(16); }
+      html.nj-onboarding .x-ob__dot:first-child i:nth-child(3) { transform: translate3d(16px, 0, 0); }
+      html.nj-onboarding .x-ob__dot:nth-child(2) { transform: translate3d(32px, 0, 0); }
+      html.nj-onboarding .x-ob__dot:nth-child(3) { transform: translate3d(48px, 0, 0); }
+      html.nj-onboarding .x-ob__dot:nth-child(4) { transform: translate3d(64px, 0, 0); }
+      html.nj-app-in body > :not(#onboard):not(#toast) { animation: x-app-in 250ms var(--ease-out) both; }
+      @keyframes x-app-in { from { opacity: 0; } to { opacity: 1; } }
       .x-ob__glow { position: absolute; inset: 0; pointer-events: none; animation: x-ob-breathe 7s ease-in-out infinite alternate; }
       .x-ob__orb { position: absolute; left: 50%; top: 34%; width: 150vmin; height: 150vmin; margin: -75vmin 0 0 -75vmin; border-radius: 50%; opacity: 0; will-change: transform, opacity; }
       .x-ob__orb--g { background: radial-gradient(closest-side, color-mix(in srgb, var(--x-ob-green) 55%, transparent), color-mix(in srgb, var(--x-ob-green) 14%, transparent) 55%, transparent); }
@@ -434,7 +458,7 @@
       </div>
       <button class="x-ob__skip" type="button" id="ob-skip">Salta</button>
       <div class="x-ob__stage" id="ob-stage">
-        <section class="x-ob__slide" aria-roledescription="slide" aria-label="1 di 4">
+        <section class="x-ob__slide is-current is-drawn" aria-roledescription="slide" aria-label="1 di 4">
           <div class="x-ob__art" aria-hidden="true">
             <svg viewBox="0 0 240 200">
               <path class="x-ob-d x-ob-dim" pathLength="1" d="M20 180H224" style="--d:0ms" />
@@ -567,7 +591,7 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         /* ---------- Version ---------- */
-        const APP_VERSION = "1.3.0";
+        const APP_VERSION = "1.3.1";
         $("app-version").textContent = APP + " v" + APP_VERSION;
         $("ob-version").textContent = "v" + APP_VERSION;
 
@@ -1108,7 +1132,8 @@
           function tri(x) { return Math.max(0, 1 - Math.abs(x)); }
           function width() { return root.clientWidth || window.innerWidth || 375; }
 
-          function redraw(i) { var s = slides[i]; if (!s || reduce) return; s.classList.remove("is-drawn"); void s.offsetWidth; s.classList.add("is-drawn"); }
+          var keepDrawn = false;
+          function redraw(i) { var s = slides[i]; if (!s || reduce || keepDrawn) return; s.classList.remove("is-drawn"); void s.offsetWidth; s.classList.add("is-drawn"); }
 
           function setActive(i, tick) {
             if (i === active) return;
@@ -1240,13 +1265,17 @@
           $("ob-skip").addEventListener("click", function () { haptic("tap"); finish(false); });
           $("ob-start").addEventListener("click", function () { finish(true); });
 
-          function show(delay) {
+          function show(delay, boot) {
             if (raf) { cancelAnimationFrame(raf); raf = 0; }
             open = true; drag = null;
             root.hidden = false; root.classList.remove("is-leaving");
             pos = target = 0; vel = 0; active = -1;
-            slides.forEach(function (s) { s.classList.remove("is-drawn"); });
+            /* At boot the first slide has been drawing since first paint: let it continue. */
+            var keep = !!boot && slides[0].classList.contains("is-drawn");
+            slides.forEach(function (s, j) { if (!(keep && j === 0)) s.classList.remove("is-drawn"); });
+            keepDrawn = keep;
             setActive(0, false);
+            keepDrawn = false;
             paint();
             if (delay) { slides[0].classList.remove("is-drawn"); setTimeout(function () { if (open && active === 0) redraw(0); }, delay); }
             doc.documentElement.style.overflow = "hidden";
@@ -1258,7 +1287,13 @@
             store.set(OB_KEY, "1");
             if (double) { haptic("tap"); setTimeout(function () { haptic("tap"); }, 110); }
             go("dashboard");
-            doc.documentElement.style.overflow = "";
+            var html = doc.documentElement;
+            html.style.overflow = "";
+            if (html.classList.contains("nj-onboarding")) {
+              html.classList.remove("nj-onboarding");
+              html.classList.add("nj-app-in");
+              setTimeout(function () { html.classList.remove("nj-app-in"); }, 300);
+            }
             root.classList.add("is-leaving");
             setTimeout(function () {
               if (open) return;
@@ -1273,7 +1308,10 @@
         /* ---------- Start ---------- */
         var start = (location.hash || "").slice(1);
         go(["dashboard", "trades", "new", "stats", "settings"].indexOf(start) >= 0 ? start : "dashboard");
-        if (!store.get(OB_KEY)) onboarding.show(0);
+        // An update reload carries the flag in sessionStorage too, in case localStorage is unavailable.
+        try { if (!store.get(OB_KEY) && sessionStorage.getItem(OB_KEY)) store.set(OB_KEY, "1"); } catch (e) {}
+        if (!store.get(OB_KEY)) onboarding.show(0, true);
+        else doc.documentElement.classList.remove("nj-onboarding");
 
         /* ---------- Update checker ---------- */
         var updater = (function () {
@@ -1293,6 +1331,7 @@
           function apply(v) {
             reloading = true;
             ssSet(TRY_KEY, v);
+            if (store.get(OB_KEY)) ssSet(OB_KEY, "1");
             toast("Aggiornamento alla v" + v + "…", "update");
             haptic("tap");
             setTimeout(function () {
