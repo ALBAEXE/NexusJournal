@@ -149,6 +149,8 @@
       .x-toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); z-index: 60; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--r-pill); background: var(--fill-primary); color: var(--text-primary-on); font: var(--type-label); box-shadow: var(--hark-shadow); transform: translate(-50%, 16px); opacity: 0; pointer-events: none; transition: opacity var(--dur-quick) ease, transform 300ms var(--ease-out); }
       .x-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
       .x-toast .x-ico { width: 18px; height: 18px; }
+      .x-toast.x-toast--top { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 16px); transform: translate(-50%, -16px); }
+      .x-toast.x-toast--top.is-on { transform: translate(-50%, 0); }
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -373,6 +375,7 @@
                 <label class="x-field"><span>Capitale iniziale</span><input class="x-input" type="number" id="set-capital" inputmode="decimal" step="any" min="0" placeholder="0" /></label>
                 <label class="x-toggle"><span>Vibrazione (feedback aptico)</span><input type="checkbox" id="set-haptics" /></label>
                 <button class="x-toggle x-row-btn" type="button" id="set-intro"><span>Rivedi introduzione</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+                <button class="x-toggle x-row-btn" type="button" id="set-update"><span>Controlla aggiornamenti <small class="fineprint" id="set-update-ver"></small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" /></svg></button>
               </div>
             </div>
             <div>
@@ -564,7 +567,7 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         /* ---------- Version ---------- */
-        const APP_VERSION = "1.2.1";
+        const APP_VERSION = "1.3.0";
         $("app-version").textContent = APP + " v" + APP_VERSION;
         $("ob-version").textContent = "v" + APP_VERSION;
 
@@ -684,7 +687,9 @@
         function toast(msg, kind) {
           var el = $("toast");
           var icon = kind === "error" ? '<path class="x-draw" pathLength="1" d="M12 7v6M12 17h.01" />' : '<path class="x-draw" pathLength="1" d="M5 12.5l4.5 4.5L19 7.5" />';
+          if (kind === "update") icon = '<path class="x-draw" pathLength="1" d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" />';
           el.innerHTML = '<svg viewBox="0 0 24 24" class="x-ico x-anim">' + icon + "</svg><span>" + esc(msg) + "</span>";
+          el.classList.toggle("x-toast--top", kind === "update");
           el.classList.add("is-on");
           clearTimeout(toastTimer);
           toastTimer = setTimeout(function () { el.classList.remove("is-on"); }, 2400);
@@ -1269,6 +1274,66 @@
         var start = (location.hash || "").slice(1);
         go(["dashboard", "trades", "new", "stats", "settings"].indexOf(start) >= 0 ? start : "dashboard");
         if (!store.get(OB_KEY)) onboarding.show(0);
+
+        /* ---------- Update checker ---------- */
+        var updater = (function () {
+          var LAST_KEY = "nj_last_version", TRY_KEY = "nj_update_attempt", busy = false, reloading = false;
+          function parse(v) {
+            var m = /^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/.exec(String(v || "").trim());
+            return m ? [+m[1], +(m[2] || 0), +(m[3] || 0)] : null;
+          }
+          function newer(a, b) {
+            var x = parse(a), y = parse(b);
+            if (!x || !y) return false;
+            for (var i = 0; i < 3; i++) { if (x[i] !== y[i]) return x[i] > y[i]; }
+            return false;
+          }
+          function ssGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+          function ssSet(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+          function apply(v) {
+            reloading = true;
+            ssSet(TRY_KEY, v);
+            toast("Aggiornamento alla v" + v + "…", "update");
+            haptic("tap");
+            setTimeout(function () {
+              try { location.replace(location.pathname + "?v=" + encodeURIComponent(v) + location.hash); } catch (e) { reloading = false; }
+            }, 800);
+          }
+          function check(manual) {
+            if (busy || reloading || typeof fetch !== "function") return;
+            busy = true;
+            var p;
+            try { p = fetch("version.json?t=" + Date.now(), { cache: "no-store" }); } catch (e) { p = Promise.reject(e); }
+            p.then(function (r) { return r && r.ok ? r.json() : null; })
+              .then(function (j) {
+                busy = false;
+                var v = j && typeof j.version === "string" ? j.version.trim() : "";
+                if (v && newer(v, APP_VERSION) && (manual || ssGet(TRY_KEY) !== v)) { apply(v); return; }
+                if (manual) { haptic("select"); toast("Sei già all'ultima versione"); }
+              })
+              .catch(function () {
+                busy = false;
+                if (manual) { haptic("select"); toast("Sei già all'ultima versione"); }
+              });
+          }
+          // Announce a completed update once.
+          var last = store.get(LAST_KEY);
+          if (last && last !== APP_VERSION) {
+            setTimeout(function () { toast("Aggiornata alla v" + APP_VERSION, "update"); haptic("success"); }, 400);
+          }
+          if (last !== APP_VERSION) store.set(LAST_KEY, APP_VERSION);
+          return { check: check };
+        })();
+        $("set-update-ver").textContent = "v" + APP_VERSION;
+        $("set-update").addEventListener("click", function () { haptic("tap"); updater.check(true); });
+        // Automatic checks only in the installed Home Screen app; the manual row works everywhere.
+        var installed = false;
+        try { installed = navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches; } catch (e) {}
+        if (installed) {
+          updater.check(false);
+          doc.addEventListener("visibilitychange", function () { if (doc.visibilityState === "visible") updater.check(false); });
+          window.addEventListener("pageshow", function (e) { if (e.persisted) updater.check(false); });
+        }
       })();
     </script>
   </body>
