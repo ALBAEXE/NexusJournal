@@ -13,9 +13,34 @@
     <meta name="apple-mobile-web-app-title" content="NexusJournal" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
-    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22NexusJournal%22%2C%22short_name%22%3A%22NexusJournal%22%2C%22description%22%3A%22Diario%20di%20trading%20personale%22%2C%22lang%22%3A%22it%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23000000%22%2C%22theme_color%22%3A%22%23000000%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2522http%253A%2F%2Fwww.w3.org%2F2000%2Fsvg%2522%2520viewBox%253D%25220%25200%2520512%2520512%2522%253E%253Crect%2520width%253D%2522512%2522%2520height%253D%2522512%2522%2520rx%253D%2522112%2522%2520fill%253D%2522%2523000%2522%2F%253E%253Cpath%2520d%253D%2522M120%2520360%2520L210%2520250%2520L280%2520310%2520L392%2520170%2522%2520fill%253D%2522none%2522%2520stroke%253D%2522%252300a665%2522%2520stroke-width%253D%252240%2522%2520stroke-linecap%253D%2522round%2522%2520stroke-linejoin%253D%2522round%2522%2F%253E%253Ccircle%2520cx%253D%2522392%2522%2520cy%253D%2522170%2522%2520r%253D%252230%2522%2520fill%253D%2522%2523f5f5f7%2522%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22112%22%20fill%3D%22%23000%22/%3E%3Cpath%20d%3D%22M120%20360%20L210%20250%20L280%20310%20L392%20170%22%20fill%3D%22none%22%20stroke%3D%22%2300a665%22%20stroke-width%3D%2240%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%22392%22%20cy%3D%22170%22%20r%3D%2230%22%20fill%3D%22%23f5f5f7%22/%3E%3C/svg%3E" />
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22112%22%20fill%3D%22%23000%22/%3E%3Cpath%20d%3D%22M120%20360%20L210%20250%20L280%20310%20L392%20170%22%20fill%3D%22none%22%20stroke%3D%22%2300a665%22%20stroke-width%3D%2240%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%22392%22%20cy%3D%22170%22%20r%3D%2230%22%20fill%3D%22%23f5f5f7%22/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" id="icon-192" />
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" id="icon-512" />
+    <link rel="manifest" id="app-manifest" />
+    <script>
+      (function () {
+        var abs = function (p) { return new URL(p, location.href).href; };
+        var iconHref = function (id, p) { var el = document.getElementById(id); return el && el.href ? el.href : abs(p); };
+        var manifest = {
+          name: "NexusJournal",
+          short_name: "NexusJournal",
+          description: "Diario di trading personale",
+          lang: "it",
+          start_url: abs("."),
+          scope: abs("."),
+          display: "standalone",
+          orientation: "portrait",
+          background_color: "#000000",
+          theme_color: "#000000",
+          icons: [
+            { src: iconHref("icon-192", "icon-192.png"), sizes: "192x192", type: "image/png" },
+            { src: iconHref("icon-512", "icon-512.png"), sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          ]
+        };
+        var blob = new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" });
+        document.getElementById("app-manifest").href = URL.createObjectURL(blob);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,9 +62,7 @@
       .x-appbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-inline: calc(var(--gutter) * -1); padding: calc(env(safe-area-inset-top, 0px) + 8px) var(--gutter) 10px; background: color-mix(in srgb, var(--x-oled) 82%, transparent); -webkit-backdrop-filter: var(--hark-blur); backdrop-filter: var(--hark-blur); border-bottom: 1px solid var(--stroke-secondary); }
       .x-brand { display: flex; align-items: center; gap: 10px; font: var(--type-heading); color: var(--text-primary); text-decoration: none; }
       .x-brand small { display: block; font: var(--type-caption); color: var(--text-secondary); }
-      .x-logo { width: 36px; height: 36px; flex: none; border-radius: 10px; background: var(--fill-tertiary); display: grid; place-items: center; }
-      .x-logo svg { width: 22px; height: 22px; }
-      .x-logo .x-draw { stroke: var(--fill-system-green); }
+      .x-logo { width: 36px; height: 36px; flex: none; border-radius: 22%; display: block; object-fit: cover; }
 
       /* Animated icons: strokes draw in, then rest */
       .x-ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
@@ -213,7 +236,7 @@
     <div class="page" id="top">
       <header class="x-appbar">
         <a class="x-brand" href="#" data-go="dashboard" aria-label="NexusJournal, panoramica">
-          <span class="x-logo"><svg viewBox="0 0 24 24" class="x-ico"><path class="x-draw" pathLength="1" d="M4 17l5-6 4 3.5L20 6" /></svg></span>
+          <img class="x-logo" src="icon-192.png" alt="" width="36" height="36" />
           <span>NexusJournal<small id="storage-note">Dati salvati sul dispositivo</small></span>
         </a>
         <button class="x-cta" type="button" data-go="new" id="appbar-add">
@@ -555,7 +578,7 @@
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         /* ---------- Version ---------- */
-        const APP_VERSION = "1.1.0";
+        const APP_VERSION = "1.2.0";
         $("app-version").textContent = APP + " v" + APP_VERSION;
         $("ob-version").textContent = "v" + APP_VERSION;
 
