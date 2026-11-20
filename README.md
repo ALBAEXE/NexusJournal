@@ -6,7 +6,7 @@
 
 **Il tuo diario di trading personale, nero, fluido e tutto sul tuo iPhone.**
 
-<img src="https://img.shields.io/badge/Versione-v1.3.2-22c55e?style=for-the-badge&labelColor=1c1c1e" alt="Versione v1.3.2"><br>
+<img src="https://img.shields.io/badge/Versione-v1.3.3-22c55e?style=for-the-badge&labelColor=1c1c1e" alt="Versione v1.3.3"><br>
 <img src="https://img.shields.io/badge/iPhone%20%7C%20Android%20%7C%20Desktop-Web%20App-3b82f6?style=for-the-badge&labelColor=1c1c1e&logo=safari&logoColor=white" alt="iPhone | Android | Desktop Web App"><br>
 <img src="https://img.shields.io/badge/Lingua-Italiano-8b5cf6?style=for-the-badge&labelColor=1c1c1e" alt="Lingua Italiano"><br>
 <img src="https://img.shields.io/badge/Dati-Solo%20sul%20dispositivo-0d0d0f?style=for-the-badge&labelColor=1c1c1e&logo=icloud&logoColor=white" alt="Dati Solo sul dispositivo"><br>
@@ -94,6 +94,6 @@ Tutte le operazioni restano nella memoria locale del dispositivo (`localStorage`
 
 ## Versione
 
-**v1.3.2** · aggiornato il 19/11/2026
+**v1.3.3** · aggiornato il 20/11/2026
 
 <div align="center"><sub>Uso personale · © ALBAEXE</sub></div>
